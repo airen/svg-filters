@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import { DragDropContext } from 'react-beautiful-dnd';
 
 import Icons from '../Icons';
@@ -6,12 +7,18 @@ import PresetsList from '../PresetsList';
 import FilterConstructor from '../FilterConstructor';
 import Playground from '../Playground';
 import PrimitivesList from '../PrimitivesList';
+import { DragDrop, DropZone, DragItem } from '../DragDrop';
 
 import { primitivesList } from '../Data';
 
 import { deepClone, reorder, move } from '../Helpers';
 
+import Board from '../Board';
+import { observe } from '../Game';
+
 import './App.css';
+
+
 
 class App extends Component {
   constructor() {
@@ -92,6 +99,10 @@ class App extends Component {
     });
   }
 
+  onDragStart = () => {
+    console.log('draaaaag');
+  };
+
   // Save draggable items after dragging
   onDragEnd = result => {
     const { source, destination } = result;
@@ -157,32 +168,15 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <Icons/>
-        <DragDropContext
-          onDragEnd={this.onDragEnd}
-          >
-          <div className="App__container">
-            <h2>PrimitivesList</h2>
-            <PrimitivesList
-              items={this.state.items}
-              selected={this.state.selected}
-            />
-          </div>
-
-          <div className="App__container App__container--Playground">
-            <h2>Playground</h2>
-            <FilterConstructor
-              items={this.state.items}
-              selected={this.state.selected}
-              onChange={this.onChange}
-              addPrimitive={this.addPrimitive}
-              removePrimitive={this.removePrimitive}
-              />
-
-            <Playground
-              selected={this.state.selected}/>
-          </div>
-        </DragDropContext>
+        <div className="chess">
+          {
+            observe(knightPosition => {
+               return (
+                <Board knightPosition={knightPosition}/>
+                );
+            })
+          }
+        </div>
       </div>
     );
   }
